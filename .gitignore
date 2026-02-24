@@ -40,3 +40,5 @@ build/
 
 /src/resources/application-dev.properties
 
+.idea/
+.smarttomcat/
