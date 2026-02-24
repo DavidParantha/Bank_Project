@@ -17,7 +17,6 @@ public final class ConnectionManager {
     private static boolean isSchemaInitialized = false;
     static final Logger log = Logger.getLogger(ConnectionManager.class.getName());
 
-
     private ConnectionManager() {
     }
 
@@ -39,18 +38,19 @@ public final class ConnectionManager {
         return connection;
     }
 
-    private static void establishConnection() {
+    private static void establishConnection() throws SQLException {
         try {
             String url = ConfigLoader.getProperty(ConfigKeys.DB_URL);
             String user = ConfigLoader.getProperty(ConfigKeys.DB_USER);
             String pass = ConfigLoader.getProperty(ConfigKeys.DB_PWD);
             String driverName = ConfigLoader.getProperty(ConfigKeys.DB_MYSQL_DRIVER);
 
-            Class.forName(driverName);//VVI
+            Class.forName(driverName);// VVI
             connection = DriverManager.getConnection(url, user, pass);
             log.info("Database connection established.");
         } catch (Exception e) {
             log.severe("Database Connection Failed: " + e.getMessage());
+            throw new SQLException("Failed to establish database connection", e);
         }
     }
 

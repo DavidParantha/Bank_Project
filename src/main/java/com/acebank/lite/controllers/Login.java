@@ -5,7 +5,6 @@ import java.io.Serial;
 import java.util.List;
 import java.util.Optional;
 
-
 import com.acebank.lite.dao.BankUserDao;
 import com.acebank.lite.dao.BankUserDaoImpl;
 import com.acebank.lite.models.LoginResult;
@@ -33,14 +32,42 @@ public class Login extends HttpServlet {
 
         String accStr = request.getParameter("accountNumber");
         String password = request.getParameter("password");
-//        String rememberMe = request.getParameter("rememberMe");
+        // String rememberMe = request.getParameter("rememberMe");
 
         try {
-            int accountNo = Integer.parseInt(accStr);
+
+            // ✅ Validate input first
+            if (accStr == null || accStr.trim().isEmpty()) {
+                request.setAttribute("errorTitle", "Login Failed");
+                request.setAttribute("errorMessage", "Account number is required.");
+                request.setAttribute("errorCode", 400);
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+                return;
+            }
+
+            // ✅ Reject email explicitly (prevents 500)
+            if (accStr.contains("@")) {
+                request.setAttribute("errorTitle", "Login Failed");
+                request.setAttribute("errorMessage", "Please login using your Account Number, not Email.");
+                request.setAttribute("errorCode", 400);
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+                return;
+            }
+
+            int accountNo;
+
+            try {
+                accountNo = Integer.parseInt(accStr);
+            } catch (NumberFormatException nfe) {
+                request.setAttribute("errorTitle", "Login Failed");
+                request.setAttribute("errorMessage", "Account number must be numeric.");
+                request.setAttribute("errorCode", 400);
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+                return;
+            }
 
             // 1. Authenticate via Service
             Optional<LoginResult> loginResultOpt = bankService.authenticate(accountNo, password);
-
 
             if (loginResultOpt.isPresent()) {
                 var details = loginResultOpt.get();
@@ -57,23 +84,25 @@ public class Login extends HttpServlet {
                 List<Transaction> statement = userDao.getStatement(accountNo);
                 session.setAttribute("transactionDetailsList", statement);
 
-                // 4. Handle "Remember Me" Cookie
-
-
                 log.info("User " + accountNo + " logged in successfully.");
 
-//                request.getRequestDispatcher("/WEB-INF/views/Home.jsp").forward(request, response);
-
                 // PRG Pattern
-                // REDIRECT: Tells browser "Go to /home using GET"
                 response.sendRedirect(request.getContextPath() + "/home");
             } else {
                 log.warning("Authentication failed for account: " + accStr);
-                response.sendRedirect("LoginFail.jsp");
+                request.setAttribute("errorTitle", "Login Failed");
+                request.setAttribute("errorMessage", "Invalid account number or password. Please try again.");
+                request.setAttribute("errorCode", 401);
+                request.getRequestDispatcher("error.jsp").forward(request, response);
             }
+
         } catch (Exception e) {
             log.severe("Login Error: \n" + e.getMessage());
-            response.sendRedirect("LoginFail.jsp");
+            request.setAttribute("errorTitle", "System Error");
+            request.setAttribute("errorMessage",
+                    "We encountered an unexpected error while trying to log you in. Please try again later.");
+            request.setAttribute("errorCode", 500);
+            request.getRequestDispatcher("error.jsp").forward(request, response);
         }
     }
 
