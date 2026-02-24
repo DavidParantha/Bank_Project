@@ -1,0 +1,9 @@
+target/
+.idea/
+.smarttomcat/
+*.iml
+*.iws
+*.ipr
+.git/
+.gitignore
+.DS_Store
