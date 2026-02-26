@@ -38,40 +38,18 @@ public class Login extends HttpServlet {
 
             // ✅ Validate input first
             if (accStr == null || accStr.trim().isEmpty()) {
-                request.setAttribute("errorTitle", "Login Failed");
-                request.setAttribute("errorMessage", "Account number is required.");
-                request.setAttribute("errorCode", 400);
-                request.getRequestDispatcher("error.jsp").forward(request, response);
+                request.setAttribute("loginError", "Account Number or Email is required.");
+                request.getRequestDispatcher("login.jsp").forward(request, response);
                 return;
             }
 
-            // ✅ Reject email explicitly (prevents 500)
-            if (accStr.contains("@")) {
-                request.setAttribute("errorTitle", "Login Failed");
-                request.setAttribute("errorMessage", "Please login using your Account Number, not Email.");
-                request.setAttribute("errorCode", 400);
-                request.getRequestDispatcher("error.jsp").forward(request, response);
-                return;
-            }
-
-            int accountNo;
-
-            try {
-                accountNo = Integer.parseInt(accStr);
-            } catch (NumberFormatException nfe) {
-                request.setAttribute("errorTitle", "Login Failed");
-                request.setAttribute("errorMessage", "Account number must be numeric.");
-                request.setAttribute("errorCode", 400);
-                request.getRequestDispatcher("error.jsp").forward(request, response);
-                return;
-            }
-
-            // 1. Authenticate via Service
-            Optional<LoginResult> loginResultOpt = bankService.authenticate(accountNo, password);
+            // 1. Authenticate via Service (handles both Acc No and Email)
+            Optional<LoginResult> loginResultOpt = bankService.authenticate(accStr, password);
 
             if (loginResultOpt.isPresent()) {
                 var details = loginResultOpt.get();
                 HttpSession session = request.getSession(true);
+                int accountNo = details.accountNumber();
 
                 // 2. Populate Session Attributes
                 session.setAttribute("accountNumber", accountNo);
@@ -89,11 +67,9 @@ public class Login extends HttpServlet {
                 // PRG Pattern
                 response.sendRedirect(request.getContextPath() + "/home");
             } else {
-                log.warning("Authentication failed for account: " + accStr);
-                request.setAttribute("errorTitle", "Login Failed");
-                request.setAttribute("errorMessage", "Invalid account number or password. Please try again.");
-                request.setAttribute("errorCode", 401);
-                request.getRequestDispatcher("error.jsp").forward(request, response);
+                log.warning("Authentication failed for login ID: " + accStr);
+                request.setAttribute("loginError", "Invalid credentials. Please try again.");
+                request.getRequestDispatcher("login.jsp").forward(request, response);
             }
 
         } catch (Exception e) {

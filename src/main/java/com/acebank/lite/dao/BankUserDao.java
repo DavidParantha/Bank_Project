@@ -34,4 +34,15 @@ public interface BankUserDao {
     boolean accountExists(int accountNo) throws SQLException;
 
     BigDecimal getBalance(int accountNo) throws SQLException;
+
+    boolean resetPasswordByEmail(String email, String newHash) throws SQLException;
+
+    Optional<Integer> getAccountNumberByEmail(String email) throws SQLException;
+
+    boolean saveLoanRequest(String fullName, String email, String phone, String loanType, BigDecimal amount)
+            throws SQLException;
+
+    boolean emailExists(String email) throws SQLException;
+
+    boolean aadhaarExists(String aadhaar) throws SQLException;
 }

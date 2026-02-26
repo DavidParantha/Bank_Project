@@ -1,10 +1,8 @@
 package com.acebank.lite.service;
 
-
 import com.acebank.lite.dao.BankUserDao;
 import com.acebank.lite.dao.BankUserDaoImpl;
 
-import com.acebank.lite.models.*;
 import com.acebank.lite.models.*;
 import com.acebank.lite.util.MailUtil;
 import com.acebank.lite.util.PasswordUtil;
@@ -21,13 +19,26 @@ import java.util.concurrent.ThreadLocalRandom;
 public class BankServiceImpl implements BankService {
 
     private final BankUserDao userDao = new BankUserDaoImpl(); // Or get via Singleton
-    private static final BigDecimal DAILY_LIMIT = new BigDecimal("500.00");
-
+    private static final BigDecimal DAILY_LIMIT = new BigDecimal("250000.00");
 
     @Override
-    public Optional<LoginResult> authenticate(int accountNo, String plainPassword) {
+    public Optional<LoginResult> authenticate(String loginId, String plainPassword) {
         try {
-            // 1. Get the hash using the new DAO method
+            int accountNo;
+            try {
+                // Try parsing as account number (integer)
+                accountNo = Integer.parseInt(loginId.trim());
+            } catch (NumberFormatException e) {
+                // If not an integer, try treating as an email address
+                Optional<Integer> resolvedAccNo = userDao.getAccountNumberByEmail(loginId.trim());
+                if (resolvedAccNo.isPresent()) {
+                    accountNo = resolvedAccNo.get();
+                } else {
+                    return Optional.empty(); // Not found
+                }
+            }
+
+            // 1. Get the hash using the resolved account number
             String storedHash = userDao.getPasswordHash(accountNo);
 
             // 2. Compare using BCrypt
@@ -41,9 +52,13 @@ public class BankServiceImpl implements BankService {
         return Optional.empty();
     }
 
-
     @Override
     public boolean changePassword(int accountNo, String oldPlain, String newPlain) throws SQLException {
+        // Business Rule: New password should not be same as old password
+        if (oldPlain.trim().equals(newPlain.trim())) {
+            return false;
+        }
+
         String storedHash = userDao.getPasswordHash(accountNo);
 
         if (PasswordUtil.checkPassword(oldPlain, storedHash)) {
@@ -52,7 +67,6 @@ public class BankServiceImpl implements BankService {
         }
         return false;
     }
-
 
     @Override
     public boolean processDeposit(int accountNo, BigDecimal amount) {
@@ -69,7 +83,6 @@ public class BankServiceImpl implements BankService {
             return false;
         }
     }
-
 
     @Override
     public String withdraw(int accountNo, BigDecimal amount) {
@@ -97,42 +110,52 @@ public class BankServiceImpl implements BankService {
         }
     }
 
-
     @Override
-    public Optional<LoginResult> registerUser(User user) {
-        // 1. Generate a unique account number
-        int accountNumber = ThreadLocalRandom.current().nextInt(10000000, 99999999);
-        // Hash before saving to DB
-        String secureHash = PasswordUtil.hashPassword(user.passwordHash());
-
-        // Create a new version of the record with the hash
-        User secureUser = new User(
-                user.userId(), user.firstName(), user.lastName(),
-                user.aadhaarNo(), user.email(), secureHash, user.createdAt()
-        );
+    public SignupResponse registerUser(User user) {
         try {
-            // 2. Save to Database via DAO
+            // 1. Check for existing Email and Aadhaar
+            if (userDao.emailExists(user.email())) {
+                log.warning("Signup Attempt Failed: Email already exists: " + user.email());
+                return new SignupResponse(false, "Email address is already registered.", Optional.empty());
+            }
+            if (userDao.aadhaarExists(user.aadhaarNo())) {
+                log.warning("Signup Attempt Failed: Aadhaar already exists: " + user.aadhaarNo());
+                return new SignupResponse(false, "Aadhaar number is already linked to an account.", Optional.empty());
+            }
+
+            // 2. Generate a unique account number
+            int accountNumber = ThreadLocalRandom.current().nextInt(10000000, 99999999);
+            // Hash before saving to DB
+            String secureHash = PasswordUtil.hashPassword(user.passwordHash());
+
+            // Create a new version of the record with the hash
+            User secureUser = new User(
+                    user.userId(), user.firstName(), user.lastName(),
+                    user.aadhaarNo(), user.email(), secureHash, user.createdAt());
+
+            // 3. Save to Database via DAO
             boolean isSaved = userDao.signUp(secureUser, accountNumber);
 
             if (isSaved) {
-                // 3. Send Welcome Email (Asynchronous is better, but this works for now)
+                // 3. Send Welcome Email
                 sendWelcomeEmail(user, accountNumber);
 
                 // 4. Return the details to be used for the session
-                return Optional.of(new LoginResult(
+                LoginResult details = new LoginResult(
                         user.firstName(),
                         user.lastName(),
                         user.email(),
                         BigDecimal.ZERO,
-                        accountNumber
-                ));
+                        accountNumber);
+                return new SignupResponse(true, "Account created successfully!", Optional.of(details));
             }
+            return new SignupResponse(false, "Database error. Please try again later.", Optional.empty());
+
         } catch (Exception e) {
             log.severe("Signup Error: " + e.getMessage());
+            return new SignupResponse(false, "An unexpected system error occurred.", Optional.empty());
         }
-        return Optional.empty();
     }
-
 
     private void sendWelcomeEmail(User user, int accNo) {
         String subject = "Welcome to AceBank";
@@ -238,26 +261,24 @@ public class BankServiceImpl implements BankService {
         return false;
     }
 
-
     @Override
     public boolean applyForLoan(String firstName, String email, String loanType) {
         String subject = "Loan Application Received - AceBank";
         String body = String.format(
                 """
                         Dear %s,
-                        
+
                         Thank you for applying for a %s loan with AceBank.
                         We have received your request and our team will review it shortly.
-                        
+
                         We will be in touch with you as soon as a decision is made.
-                        
+
                         Sincerely,
                         The AceBank Team""",
-                firstName, loanType
-        );
+                firstName, loanType);
 
         try {
-            MailUtil.sendMail(email, subject, body);
+            MailUtil.sendMailAsync(email, subject, body);
             return true;
         } catch (Exception e) {
             log.severe("Failed to send loan confirmation email: " + e.getMessage());
@@ -265,5 +286,30 @@ public class BankServiceImpl implements BankService {
         }
     }
 
+    @Override
+    public boolean resetPasswordByEmail(String email, String newPlainPassword) {
+        try {
+            String secureHash = PasswordUtil.hashPassword(newPlainPassword);
+            return userDao.resetPasswordByEmail(email, secureHash);
+        } catch (Exception e) {
+            log.severe("Password reset failed for " + email + ": " + e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean saveLoanRequest(String fullName, String email, String phone, String loanType, BigDecimal amount) {
+        try {
+            boolean saved = userDao.saveLoanRequest(fullName, email, phone, loanType, amount);
+            if (saved) {
+                // Also send the confirmation email
+                applyForLoan(fullName, email, loanType);
+            }
+            return saved;
+        } catch (Exception e) {
+            log.severe("Failed to save loan request: " + e.getMessage());
+            return false;
+        }
+    }
 
 }

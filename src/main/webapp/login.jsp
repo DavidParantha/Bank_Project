@@ -13,13 +13,22 @@
 
         <body>
 
+            <!-- Floating Parallax Orbs -->
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+
             <header class="navbar">
-                <div class="brand">Ace<span>Bank</span></div>
+                <a href="<%= request.getContextPath() %>/About.jsp" class="brand">
+                    <img src="<%= request.getContextPath() %>/assets/images/logo.png" alt="AceBank Logo"
+                        class="brand-logo">
+                    Ace<span>Bank</span>
+                </a>
                 <div class="nav-actions">
                     <a href="<%= request.getContextPath() %>/index.jsp"><i data-lucide="home"
                             class="icon-inline"></i>Home</a>
-                    <a href="<%= request.getContextPath() %>/sign-up.jsp" class="btn"><i data-lucide="user-plus"
-                            style="width:16px;height:16px;vertical-align:-2px;margin-right:4px;"></i>Join Now</a>
+                    <a href="<%= request.getContextPath() %>/About.jsp"><i data-lucide="info"
+                            class="icon-inline"></i>About</a>
                 </div>
             </header>
 
@@ -39,13 +48,35 @@
                         </div>
                     </c:if>
 
+                    <c:if test="${param.success == 'reset'}">
+                        <div class="alert alert-success">
+                            <i data-lucide="check-circle"
+                                style="width:16px;height:16px;vertical-align:-2px;margin-right:4px;"></i>
+                            Password reset successfully! You can now log in with your new password.
+                        </div>
+                    </c:if>
+
+                    <c:if test="${not empty loginError}">
+                        <div class="alert alert-error">
+                            <i data-lucide="alert-circle"
+                                style="width:16px;height:16px;vertical-align:-2px;margin-right:4px;"></i>
+                            ${loginError}
+                        </div>
+                    </c:if>
+
                     <form action="Login" method="POST" class="form" style="grid-template-columns: 1fr;">
-                        <label for="accNo">Account Number</label>
-                        <input type="number" id="accNo" name="accountNumber" value="${savedAccount}" required
-                            placeholder="Enter your account number" />
+                        <label for="accNo">Account Number or Email</label>
+                        <input type="text" id="accNo" name="accountNumber" value="${savedAccount}" required
+                            placeholder="e.g., 1000 or user@example.com" />
 
                         <label for="pass">Password</label>
-                        <input type="password" id="pass" name="password" required placeholder="Enter your password" />
+                        <div class="password-wrap">
+                            <input type="password" id="pass" name="password" required
+                                placeholder="Enter your password" />
+                            <button type="button" class="toggle-pw" onclick="togglePassword('pass', this)">
+                                <i data-lucide="eye" style="width:18px;height:18px;"></i>
+                            </button>
+                        </div>
 
                         <label style="display:flex; align-items:center; gap:8px; margin-top:4px;">
                             <input type="checkbox" name="rememberMe" id="remember" ${not empty savedAccount ? 'checked'
@@ -53,7 +84,7 @@
                             <span class="muted">Remember Me</span>
                         </label>
 
-                        <button class="btn" type="submit" style="width:100%; margin-top:8px;">
+                        <button class="btn btn-shine" type="submit" style="width:100%; margin-top:8px;">
                             <i data-lucide="arrow-right"
                                 style="width:16px;height:16px;vertical-align:-2px;margin-right:4px;"></i>Login
                         </button>

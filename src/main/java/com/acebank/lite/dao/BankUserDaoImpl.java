@@ -253,15 +253,15 @@ public class BankUserDaoImpl implements BankUserDao {
     @Override
     public boolean changePassword(int accountNo, String oldPw, String newPw) throws SQLException {
         try (Connection conn = getConnection()) {
-            int userId = -1;
-            PreparedStatement ps1 = conn.prepareStatement(QueryLoader.get("user.check_password_by_acc"));
+            // Use the correct query key: account.check_pw
+            PreparedStatement ps1 = conn.prepareStatement(QueryLoader.get("account.check_pw"));
             ps1.setInt(1, accountNo);
             ResultSet rs = ps1.executeQuery();
             if (rs.next() && rs.getString("PASSWORD_HASH").equals(oldPw)) {
-                userId = rs.getInt("USER_ID");
+                // update_password expects (hash, accountNo)
                 PreparedStatement ps2 = conn.prepareStatement(QueryLoader.get("user.update_password"));
                 ps2.setString(1, newPw);
-                ps2.setInt(2, userId);
+                ps2.setInt(2, accountNo);
                 return ps2.executeUpdate() > 0;
             }
             return false;
@@ -313,4 +313,68 @@ public class BankUserDaoImpl implements BankUserDao {
         return BigDecimal.ZERO;
     }
 
+    @Override
+    public boolean resetPasswordByEmail(String email, String newHash) throws SQLException {
+        String sql = QueryLoader.get("user.update_password_by_email");
+        try (Connection conn = getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newHash);
+            ps.setString(2, email);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    @Override
+    public boolean saveLoanRequest(String fullName, String email, String phone, String loanType, BigDecimal amount)
+            throws SQLException {
+        String sql = QueryLoader.get("loan.insert");
+        try (Connection conn = getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, fullName);
+            ps.setString(2, email);
+            ps.setString(3, phone);
+            ps.setString(4, loanType);
+            ps.setBigDecimal(5, amount);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    @Override
+    public boolean emailExists(String email) throws SQLException {
+        String sql = "SELECT 1 FROM USERS WHERE EMAIL = ?";
+        try (Connection conn = getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    @Override
+    public boolean aadhaarExists(String aadhaar) throws SQLException {
+        String sql = "SELECT 1 FROM USERS WHERE AADHAAR_NO = ?";
+        try (Connection conn = getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, aadhaar);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    @Override
+    public Optional<Integer> getAccountNumberByEmail(String email) throws SQLException {
+        String sql = "SELECT a.ACCOUNT_NO FROM ACCOUNTS a JOIN USERS u ON a.USER_ID = u.USER_ID WHERE u.EMAIL = ?";
+        try (Connection conn = getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(rs.getInt("ACCOUNT_NO"));
+                }
+            }
+        }
+        return Optional.empty();
+    }
 }
