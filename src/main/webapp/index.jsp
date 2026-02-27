@@ -10,7 +10,6 @@
             <meta name="description"
                 content="AceBank - Modern banking made easy. Open an account, transfer money instantly, and manage your finances with confidence." />
             <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/main.css" />
-            <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
         </head>
 
         <body>
@@ -108,7 +107,7 @@
                 <!-- HERO -->
                 <section class="hero hero-split">
                     <div class="hero-content">
-                        <div class="badge hero-badge pulse-glow" style="margin-bottom: 20px;">
+                        <div class="badge hero-badge pulse-glow" style="margin: 0 auto 24px; display: inline-flex;">
                             <i data-lucide="sparkles"
                                 style="width:14px;height:14px;vertical-align:-2px;margin-right:4px;"></i>
                             Trusted by 2M+ Users Worldwide
@@ -139,16 +138,6 @@
                                 </c:otherwise>
                             </c:choose>
                         </div>
-                    </div>
-                    <div class="hero-visual scroll-reveal" style="animation-delay:.4s">
-                        <dotlottie-player 
-                            src="https://assets-v2.lottiefiles.com/a/43c5dbb8-1189-11ee-9213-9311bc01c8b8/cgJsC0U8qu.lottie" 
-                            background="transparent" 
-                            speed="1" 
-                            style="width: 100%; height: auto; max-width: 450px; filter: drop-shadow(0 0 30px var(--primary-glow));" 
-                            loop 
-                            autoplay>
-                        </dotlottie-player>
                     </div>
                 </section>
 

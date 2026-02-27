@@ -10,7 +10,8 @@
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>Dashboard | AceBank</title>
                 <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/main.css" />
-                <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+                <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"
+                    type="module"></script>
             </head>
 
             <body>
@@ -109,18 +110,9 @@
                                             style="width:12px;height:12px;vertical-align:-1px;margin-right:2px;"></i>Account:
                                         ${sessionScope.accountNumber}</p>
                                 </div>
-                                <div style="width: 120px; height: 120px;">
-                                    <dotlottie-player 
-                                        src="https://assets-v2.lottiefiles.com/a/43c5dbb8-1189-11ee-9213-9311bc01c8b8/cgJsC0U8qu.lottie" 
-                                        background="transparent" 
-                                        speed="1" 
-                                        style="width: 100%; height: 100%;" 
-                                        loop 
-                                        autoplay>
-                                    </dotlottie-player>
-                                </div>
                             </div>
                             <i data-lucide="landmark" class="icon-profile"></i>
+                        </div>
                         </div>
                     </section>
 

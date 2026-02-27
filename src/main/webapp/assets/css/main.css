@@ -68,7 +68,7 @@ body {
     transition: background .4s ease, color .4s ease;
 }
 
-/* ===== ANIMATED BACKGROUND ===== */
+/* ===== ANIMATED MESH BACKGROUND ===== */
 body::before {
     content: '';
     position: fixed;
@@ -99,6 +99,101 @@ body::before {
     66% {
         transform: translate(-1%, 2%) rotate(-1deg);
     }
+}
+
+
+
+
+
+:root[data-theme="light"] body::before {
+    background:
+        radial-gradient(at 0% 0%, hsla(210, 40%, 98%, 1) 0, transparent 50%),
+        radial-gradient(at 50% 0%, hsla(225, 39%, 95%, 1) 0, transparent 50%),
+        radial-gradient(at 100% 0%, hsla(339, 49%, 95%, 1) 0, transparent 50%),
+        radial-gradient(at 100% 100%, hsla(210, 40%, 98%, 1) 0, transparent 50%);
+    filter: none;
+}
+
+/* ===== FLOATING PARALLAX ORBS ===== */
+.orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: .25;
+    pointer-events: none;
+    z-index: -1;
+    will-change: transform;
+}
+
+.orb-1 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--primary), transparent 70%);
+    top: -10%;
+    left: -10%;
+    animation: orbFloat1 15s ease-in-out infinite;
+}
+
+.orb-2 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, #8b5cf6, transparent 70%);
+    bottom: -10%;
+    right: -10%;
+    animation: orbFloat2 18s ease-in-out infinite;
+}
+
+.orb-3 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, #06b6d4, transparent 70%);
+    top: 40%;
+    left: 30%;
+    animation: orbFloat3 20s ease-in-out infinite;
+}
+
+@keyframes orbFloat1 {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+        transform: translate(40px, 60px) scale(1.1);
+    }
+
+    66% {
+        transform: translate(-20px, 40px) scale(0.9);
+    }
+}
+
+@keyframes orbFloat2 {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate(-60px, -40px) scale(1.05);
+    }
+}
+
+@keyframes orbFloat3 {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate(50px, -30px) scale(1.15);
+    }
+}
+
+:root[data-theme="light"] .orb {
+    opacity: .15;
 }
 
 /* ===== LAYOUT ===== */
@@ -719,27 +814,22 @@ body::before {
 
 .hero-split {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    gap: 60px;
-    text-align: left;
+    justify-content: center;
+    gap: 30px;
+    text-align: center;
     padding: 80px 0;
-    max-width: 1200px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
 .hero-content {
-    flex: 1.2;
-    max-width: 650px;
+    flex: 1;
+    max-width: 100%;
 }
 
-.hero-visual {
-    flex: 0.8;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    position: relative;
-}
+
 
 @media (max-width: 1024px) {
     .hero-split {
@@ -754,14 +844,9 @@ body::before {
         padding: 40px 0;
         gap: 30px;
     }
-    
+
     .hero-content {
         max-width: 100%;
-    }
-
-    .hero-visual {
-        justify-content: center;
-        width: 100%;
     }
 }
 
@@ -806,8 +891,6 @@ body::before {
 .hero-actions {
     display: flex;
     gap: 12px;
-    justify-content: center;
-    flex-wrap: wrap;
 }
 
 /* ===== FEATURES GRID ===== */
