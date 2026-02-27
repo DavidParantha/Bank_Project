@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: ace-bank-lite
+    runtime: docker
+    plan: free # Use free tier
+    envVars:
+      - key: DB_URL
+        placeholder: "jdbc:mysql://your-db-host:3306/acebank"
+      - key: DB_USER
+        placeholder: "your-db-user"
+      - key: DB_PASSWORD
+        sync: false # Sensitive info
+      - key: DB_MYSQL_DRIVER
+        value: "com.mysql.cj.jdbc.Driver"
+      - key: DB_SCRIPT_PATH
+        value: "/sql/schema_initializer.sql"
+      - key: MAIL_DEFAULT_ADDRESS
+        placeholder: "your-email@gmail.com"
+      - key: MAIL_GOOGLE_APP_PASSWORD
+        sync: false # Sensitive info
+      - key: MAIL_SMTP_HOST
+        value: "smtp.gmail.com"
+      - key: MAIL_SMTP_PORT
+        value: "587"
