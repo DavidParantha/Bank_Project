@@ -9,16 +9,22 @@ public class ConfigLoader {
 
     static {
         // Look for the file in the src/main/resources folder
+        // In Docker/Render, this file won't exist (it's gitignored) — that's OK,
+        // we'll use environment variables instead.
         try (InputStream is = ConfigLoader.class.getClassLoader()
                 .getResourceAsStream(ConfigKeys.DEV_PROPERTIES)) {
 
             if (is == null) {
-                throw new RuntimeException("Could not find " + ConfigKeys.DEV_PROPERTIES);
+                System.out.println("[ConfigLoader] WARNING: " + ConfigKeys.DEV_PROPERTIES
+                        + " not found. Relying on environment variables.");
+            } else {
+                properties.load(is);
+                System.out.println("[ConfigLoader] Loaded " + ConfigKeys.DEV_PROPERTIES);
             }
-            properties.load(is);
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load configuration", e);
+            System.out.println("[ConfigLoader] ERROR reading config file: " + e.getMessage()
+                    + ". Relying on environment variables.");
         }
     }
 
@@ -32,7 +38,8 @@ public class ConfigLoader {
         String envValue = System.getenv(key.replace(".", "_").toUpperCase());
 
         // I am giving priority to env variables
-        if (envValue != null) return envValue;
+        if (envValue != null)
+            return envValue;
 
         // Priority 2: Check the properties file
         return properties.getProperty(key);
