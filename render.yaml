@@ -2,23 +2,34 @@ services:
   - type: web
     name: ace-bank-lite
     runtime: docker
-    plan: free # Use free tier
+    plan: free
     envVars:
+      # --- Database Configuration ---
       - key: DB_URL
-        placeholder: "jdbc:mysql://your-db-host:3306/acebank"
+        sync: false   # Set this in Render Dashboard: jdbc:mysql://<host>:<port>/<dbname>?useSSL=true&allowPublicKeyRetrieval=true
       - key: DB_USER
-        placeholder: "your-db-user"
+        sync: false   # Set this in Render Dashboard
       - key: DB_PASSWORD
-        sync: false # Sensitive info
+        sync: false   # Set this in Render Dashboard
       - key: DB_MYSQL_DRIVER
         value: "com.mysql.cj.jdbc.Driver"
       - key: DB_SCRIPT_PATH
         value: "/sql/schema_initializer.sql"
+
+      # --- Email / SMTP Configuration ---
       - key: MAIL_DEFAULT_ADDRESS
-        placeholder: "your-email@gmail.com"
+        sync: false   # Set this in Render Dashboard: your Gmail address
       - key: MAIL_GOOGLE_APP_PASSWORD
-        sync: false # Sensitive info
+        sync: false   # Set this in Render Dashboard: your Google App Password
       - key: MAIL_SMTP_HOST
         value: "smtp.gmail.com"
       - key: MAIL_SMTP_PORT
         value: "587"
+      - key: MAIL_SMTP_AUTH
+        value: "true"
+      - key: MAIL_SMTP_STARTTLS_ENABLE
+        value: "true"
+      - key: MAIL_SMTP_CONNECTION_TIMEOUT
+        value: "5000"
+      - key: MAIL_SMTP_TIMEOUT
+        value: "5000"
