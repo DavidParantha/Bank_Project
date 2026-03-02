@@ -113,7 +113,6 @@
                             </div>
                             <i data-lucide="landmark" class="icon-profile"></i>
                         </div>
-                        </div>
                     </section>
 
                     <%-- Statement sent success notification --%>
@@ -199,6 +198,55 @@
                                 </form>
                             </div>
                         </div>
+
+                        <!-- Loan Requests Section -->
+                        <section class="card card-animate" style="margin-top: 20px;">
+                            <h3><i data-lucide="landmark" class="icon-inline"></i> Loan Application Status</h3>
+                            <p class="muted" style="margin-bottom: 16px;">Track your submitted loan requests</p>
+
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:choose>
+                                        <c:when test="${not empty sessionScope.loanRequestsList}">
+                                            <c:forEach var="loan" items="${sessionScope.loanRequestsList}">
+                                                <tr>
+                                                    <td>${loan.createdAt()}</td>
+                                                    <td>${loan.loanType()}</td>
+                                                    <td>₹ ${loan.amount()}</td>
+                                                    <td>
+                                                        <span
+                                                            class="tag ${loan.status().toLowerCase()}">${loan.status()}</span>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <tr>
+                                                <td colspan="4"
+                                                    style="text-align:center; padding: 24px; color: var(--muted);">
+                                                    No loan applications found.
+                                                </td>
+                                            </tr>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </tbody>
+                            </table>
+                            <div style="margin-top: 16px; text-align: right;">
+                                <a href="<%= request.getContextPath() %>/LoanRequest.jsp" class="btn"
+                                    style="text-decoration: none; display: inline-flex; align-items: center;">
+                                    <i data-lucide="plus" style="width:16px;height:16px;margin-right:4px;"></i> Apply
+                                    for New Loan
+                                </a>
+                            </div>
+                        </section>
 
                         <!-- Transactions — Hidden by Default -->
                         <section class="card card-animate" style="margin-top: 20px;">
@@ -291,6 +339,11 @@
                         </section>
 
                 </main>
+
+                <footer
+                    style="text-align:center; padding:40px 20px; color:var(--muted); font-size:14px; border-top:1px solid var(--border-color); margin-top:40px;">
+                    <p>&copy; 2024 AceBank Lite. All rights reserved.</p>
+                </footer>
 
                 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
                 <script src="<%= request.getContextPath() %>/assets/js/ui.js"></script>

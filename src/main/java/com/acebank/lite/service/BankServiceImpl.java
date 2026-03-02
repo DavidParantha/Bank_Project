@@ -312,4 +312,13 @@ public class BankServiceImpl implements BankService {
         }
     }
 
+    @Override
+    public List<LoanRequest> getLoanRequests(String email) {
+        try {
+            return userDao.getLoanRequestsRecord(email);
+        } catch (SQLException e) {
+            log.severe("Failed to fetch loan requests for " + email + ": " + e.getMessage());
+            return List.of();
+        }
+    }
 }

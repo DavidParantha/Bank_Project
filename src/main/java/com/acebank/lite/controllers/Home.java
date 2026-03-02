@@ -1,6 +1,5 @@
 package com.acebank.lite.controllers;
 
-
 import com.acebank.lite.models.*;
 
 import com.acebank.lite.service.BankService;
@@ -41,10 +40,11 @@ public class Home extends HttpServlet {
         }
 
         int accountNumber = (int) session.getAttribute("accountNumber");
+        String email = (String) session.getAttribute("email");
 
         try {
             // Always refresh data before painting the UI
-            updateSessionData(session, accountNumber);
+            updateSessionData(session, accountNumber, email);
 
             // Forward to the hidden JSP in WEB-INF
             request.getRequestDispatcher("/WEB-INF/views/Home.jsp").forward(request, response);
@@ -87,7 +87,7 @@ public class Home extends HttpServlet {
                 log.info("Deposit Status: " + status);
 
             }
-// --- ACTION 2: WITHDRAW ---
+            // --- ACTION 2: WITHDRAW ---
             else if (withdrawAmount != null && !withdrawAmount.trim().isEmpty()) {
                 BigDecimal amount = new BigDecimal(withdrawAmount);
                 // Ensure your Service has this method matching the DAO rectification we did
@@ -114,12 +114,14 @@ public class Home extends HttpServlet {
 
     }
 
-    private void updateSessionData(HttpSession session, int accountNumber) {
+    private void updateSessionData(HttpSession session, int accountNumber, String email) {
         log.info("Refreshing session data for account: " + accountNumber);
         BigDecimal newBalance = bankService.getBalance(accountNumber);
         List<Transaction> newList = bankService.getTransactionHistory(accountNumber);
+        List<LoanRequest> loanRequests = bankService.getLoanRequests(email);
 
         session.setAttribute("balance", newBalance);
         session.setAttribute("transactionDetailsList", newList);
+        session.setAttribute("loanRequestsList", loanRequests);
     }
 }

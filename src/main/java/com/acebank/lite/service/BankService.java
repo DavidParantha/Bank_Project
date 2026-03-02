@@ -5,6 +5,7 @@ import com.acebank.lite.models.ServiceResponse;
 import com.acebank.lite.models.SignupResponse;
 import com.acebank.lite.models.Transaction;
 import com.acebank.lite.models.User;
+import com.acebank.lite.models.LoanRequest;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -35,4 +36,6 @@ public interface BankService {
     boolean resetPasswordByEmail(String email, String newPlainPassword);
 
     boolean saveLoanRequest(String fullName, String email, String phone, String loanType, java.math.BigDecimal amount);
+
+    List<LoanRequest> getLoanRequests(String email);
 }

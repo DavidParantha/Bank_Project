@@ -45,4 +45,6 @@ public interface BankUserDao {
     boolean emailExists(String email) throws SQLException;
 
     boolean aadhaarExists(String aadhaar) throws SQLException;
+
+    List<LoanRequest> getLoanRequestsRecord(String email) throws SQLException;
 }

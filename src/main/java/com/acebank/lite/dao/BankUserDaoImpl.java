@@ -4,6 +4,7 @@ import com.acebank.lite.models.AccountRecoveryDTO;
 import com.acebank.lite.models.LoginResult;
 import com.acebank.lite.models.Transaction;
 import com.acebank.lite.models.User;
+import com.acebank.lite.models.LoanRequest;
 import com.acebank.lite.util.ConnectionManager;
 import com.acebank.lite.util.QueryLoader;
 
@@ -376,5 +377,29 @@ public class BankUserDaoImpl implements BankUserDao {
             }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public List<LoanRequest> getLoanRequestsRecord(String email) throws SQLException {
+        List<LoanRequest> loanRequests = new ArrayList<>();
+        String sql = QueryLoader.get("loan.get_by_email");
+        try (Connection conn = getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    loanRequests.add(new LoanRequest(
+                            rs.getInt("ID"),
+                            rs.getString("FULL_NAME"),
+                            rs.getString("EMAIL"),
+                            rs.getString("PHONE"),
+                            rs.getString("LOAN_TYPE"),
+                            rs.getBigDecimal("AMOUNT"),
+                            rs.getString("STATUS"),
+                            rs.getTimestamp("CREATED_AT").toLocalDateTime()));
+                }
+            }
+        }
+        return loanRequests;
     }
 }

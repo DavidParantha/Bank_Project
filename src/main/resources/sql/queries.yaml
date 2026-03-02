@@ -22,7 +22,7 @@ user:
     FROM USERS u 
     JOIN ACCOUNTS a ON u.USER_ID = a.USER_ID 
     WHERE a.ACCOUNT_NO = ?
-
+提升
   # Updates the password hash for the user linked to this account
   update_password: >
     UPDATE USERS u
@@ -68,3 +68,4 @@ otp:
 
 loan:
   insert: "INSERT INTO LOAN_REQUESTS (FULL_NAME, EMAIL, PHONE, LOAN_TYPE, AMOUNT) VALUES (?, ?, ?, ?, ?)"
+  get_by_email: "SELECT * FROM LOAN_REQUESTS WHERE EMAIL = ? ORDER BY CREATED_AT DESC"
