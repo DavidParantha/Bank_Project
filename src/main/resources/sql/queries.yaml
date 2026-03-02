@@ -11,6 +11,8 @@ user:
     FROM USERS u 
     JOIN ACCOUNTS a ON u.USER_ID = a.USER_ID 
     WHERE u.EMAIL = ?
+  login: >
+    SELECT u.PASSWORD_HASH FROM USERS u JOIN ACCOUNTS a ON u.USER_ID = a.USER_ID WHERE a.ACCOUNT_NO = ?
   get_password_by_acc: >
     SELECT u.PASSWORD_HASH 
     FROM USERS u 
@@ -22,7 +24,7 @@ user:
     FROM USERS u 
     JOIN ACCOUNTS a ON u.USER_ID = a.USER_ID 
     WHERE a.ACCOUNT_NO = ?
-提升
+
   # Updates the password hash for the user linked to this account
   update_password: >
     UPDATE USERS u
