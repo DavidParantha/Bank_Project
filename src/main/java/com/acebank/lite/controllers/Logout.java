@@ -15,7 +15,7 @@ import java.io.Serial;
  * Servlet implementation class Logout
  */
 @Log
-@WebServlet(name = "Logout", urlPatterns = "/Logout")
+@WebServlet(name = "Logout", urlPatterns = "/logout")
 public class Logout extends HttpServlet {
     @Serial
     private static final long serialVersionUID = 1L;

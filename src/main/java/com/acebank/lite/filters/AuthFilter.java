@@ -9,8 +9,8 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 // This defines the "Restricted Area." Any request to /home, /Withdraw, or /Transfer must pass through this guard first.
-@WebFilter(urlPatterns = { "/home", "/Withdraw", "/Transfer", "/getStatement", "/ChangePassword", "/LoanRequest",
-        "/Settings.jsp", "/SendStatement", "/WEB-INF/views/*" })
+@WebFilter(urlPatterns = { "/home", "/deposit", "/Withdraw", "/Transfer", "/getStatement", "/ChangePassword", "/LoanRequest",
+        "/Settings.jsp", "/SendStatement", "/logout", "/WEB-INF/views/*" })
 public class AuthFilter implements Filter {
 
     @Override
@@ -34,7 +34,7 @@ public class AuthFilter implements Filter {
             // User is not logged in, kick them back to the login page
             // We use a query param so the Login page can show a "Please login first"
             // message
-            httpResponse.sendRedirect("login.jsp?error=unauthorized");
+            httpResponse.sendRedirect("login.jsp?error=Please+log+in+first+to+access+this+page.");
         }
     }
 

@@ -96,6 +96,6 @@ public class SendStatementServlet extends HttpServlet {
         MailUtil.sendMailAsync(email, subject, doc.toString());
 
         log.info("Statement email queued for: " + email);
-        response.sendRedirect("home?statement=sent");
+        response.sendRedirect(request.getContextPath() + "/home?success=Transaction+statement+sent+to+your+registered+email!");
     }
 }

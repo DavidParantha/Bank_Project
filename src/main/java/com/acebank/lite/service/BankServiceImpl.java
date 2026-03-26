@@ -262,20 +262,20 @@ public class BankServiceImpl implements BankService {
     }
 
     @Override
-    public boolean applyForLoan(String firstName, String email, String loanType) {
+    public boolean applyForLoan(String firstName, String email, String loanType, BigDecimal amount) {
         String subject = "Loan Application Received - AceBank";
         String body = String.format(
                 """
                         Dear %s,
 
-                        Thank you for applying for a %s loan with AceBank.
+                        Thank you for applying for a %s loan of ₹%s with AceBank.
                         We have received your request and our team will review it shortly.
 
                         We will be in touch with you as soon as a decision is made.
 
                         Sincerely,
                         The AceBank Team""",
-                firstName, loanType);
+                firstName, loanType, amount);
 
         try {
             MailUtil.sendMailAsync(email, subject, body);
@@ -303,7 +303,7 @@ public class BankServiceImpl implements BankService {
             boolean saved = userDao.saveLoanRequest(fullName, email, phone, loanType, amount);
             if (saved) {
                 // Also send the confirmation email
-                applyForLoan(fullName, email, loanType);
+                applyForLoan(fullName, email, loanType, amount);
             }
             return saved;
         } catch (Exception e) {

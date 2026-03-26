@@ -74,7 +74,7 @@ public class ChangePasswordServlet extends HttpServlet {
             boolean success = bankService.changePassword(accountNo, currentPassword, newPassword);
             if (success) {
                 log.info("Password updated successfully for account: " + accountNo);
-                response.sendRedirect("ChangePassword.jsp?success=updated");
+                response.sendRedirect("ChangePassword.jsp?success=Password+changed+successfully");
             } else {
                 response.sendRedirect("ChangePassword.jsp?error=wrongcurrent");
             }

@@ -84,7 +84,11 @@ public class Home extends HttpServlet {
             if (depositAmtStr != null && !depositAmtStr.trim().isEmpty()) {
                 BigDecimal amount = new BigDecimal(depositAmtStr);
                 boolean status = bankService.processDeposit(accountNumber, amount);
-                log.info("Deposit Status: " + status);
+                if (status) {
+                    redirectUrl += "?success=Money+credited+to+your+account+from+Deposit";
+                } else {
+                    redirectUrl += "?error=Deposit+failed";
+                }
 
             }
             // --- ACTION 2: WITHDRAW ---
@@ -93,13 +97,23 @@ public class Home extends HttpServlet {
                 // Ensure your Service has this method matching the DAO rectification we did
                 String status = bankService.withdraw(accountNumber, amount);
                 log.info("Withdrawal Status: " + status);
+                if ("SUCCESS".equals(status)) {
+                    redirectUrl += "?success=Money+debited+from+your+account";
+                } else {
+                    redirectUrl += "?error=" + status.replace(" ", "+");
+                }
             }
 
             // --- ACTION 3: TRANSFER ---
             else if (toAccountStr != null && toAmountStr != null && !toAccountStr.trim().isEmpty()) {
                 int recipientAcc = Integer.parseInt(toAccountStr);
                 BigDecimal amount = new BigDecimal(toAmountStr);
-                bankService.processTransfer(accountNumber, recipientAcc, amount);
+                ServiceResponse responseSrv = bankService.processTransfer(accountNumber, recipientAcc, amount);
+                if (responseSrv.success()) {
+                    redirectUrl += "?success=Transfer+successful.+Money+debited+from+your+account.";
+                } else {
+                    redirectUrl += "?error=" + responseSrv.message().replace(" ", "+");
+                }
             }
 
         } catch (NumberFormatException e) {
@@ -110,7 +124,7 @@ public class Home extends HttpServlet {
         }
 
         // The Redirect: This triggers the doGet() and prevents double-form submission
-        response.sendRedirect(request.getContextPath() + "/home");
+        response.sendRedirect(request.getContextPath() + "/" + redirectUrl);
 
     }
 

@@ -40,21 +40,7 @@
                         <p>Enter your credentials to access your account.</p>
                     </div>
 
-                    <c:if test="${param.error == 'unauthorized'}">
-                        <div class="alert alert-error">
-                            <i data-lucide="alert-triangle"
-                                style="width:16px;height:16px;vertical-align:-2px;margin-right:4px;"></i>
-                            Please log in first to access that page.
-                        </div>
-                    </c:if>
 
-                    <c:if test="${param.success == 'reset'}">
-                        <div class="alert alert-success">
-                            <i data-lucide="check-circle"
-                                style="width:16px;height:16px;vertical-align:-2px;margin-right:4px;"></i>
-                            Password reset successfully! You can now log in with your new password.
-                        </div>
-                    </c:if>
 
                     <c:if test="${not empty loginError}">
                         <div class="alert alert-error">

@@ -31,7 +31,7 @@ public interface BankService {
 
     public boolean recoverAccount(String email);
 
-    public boolean applyForLoan(String firstName, String email, String loanType);
+    public boolean applyForLoan(String firstName, String email, String loanType, BigDecimal amount);
 
     boolean resetPasswordByEmail(String email, String newPlainPassword);
 

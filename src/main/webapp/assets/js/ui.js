@@ -54,10 +54,21 @@ document.addEventListener("DOMContentLoaded", () => {
     // ===== URL Param Toast Notifications for transaction feedback =====
     const params = new URLSearchParams(window.location.search);
     const errorMsg = params.get('error');
+    const successMsg = params.get('success');
+    const isWelcome = params.get('welcome');
+
     if (errorMsg) {
         showToast(decodeURIComponent(errorMsg.replace(/\+/g, ' ')), 'error');
-        // Clean URL
-        window.history.replaceState({}, '', window.location.pathname);
+    } else if (successMsg) {
+        showToast(decodeURIComponent(successMsg.replace(/\+/g, ' ')), 'success');
+    } else if (isWelcome) {
+        showToast('Hello! Welcome to AceBank. We\'re glad to have you!', 'success');
+    }
+
+    if (errorMsg || successMsg || isWelcome) {
+        // Clean URL to prevent re-showing on refresh
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
     }
 
     // ===== Scroll Reveal (Intersection Observer) =====

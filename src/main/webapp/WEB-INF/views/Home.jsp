@@ -116,13 +116,6 @@
                     </section>
 
                     <%-- Statement sent success notification --%>
-                        <c:if test="${param.statement == 'sent'}">
-                            <div class="alert alert-success" style="margin-bottom:16px;">
-                                <i data-lucide="check-circle"
-                                    style="width:16px;height:16px;vertical-align:-2px;margin-right:4px;"></i>
-                                Transaction statement sent to your registered email!
-                            </div>
-                        </c:if>
 
                         <div class="grid">
                             <!-- Balance Card — Hidden by Default -->

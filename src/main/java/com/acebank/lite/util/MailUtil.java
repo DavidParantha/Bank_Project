@@ -47,7 +47,7 @@ public class MailUtil {
             });
 
             // Enable debugging if needed
-            session.setDebug(true);
+// session.setDebug(true);
 
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(mailAddr, "AceBank Support"));

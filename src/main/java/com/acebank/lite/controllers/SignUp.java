@@ -1,6 +1,5 @@
 package com.acebank.lite.controllers;
 
-import com.acebank.lite.models.LoginResult;
 import com.acebank.lite.models.SignupResponse;
 import com.acebank.lite.models.User;
 import com.acebank.lite.service.BankService;
@@ -49,7 +48,7 @@ public class SignUp extends HttpServlet {
                 session.setAttribute("balance", details.balance());
                 session.setAttribute("transactionDetailsList", new ArrayList<>());
 
-                response.sendRedirect(request.getContextPath() + "/home");
+                response.sendRedirect(request.getContextPath() + "/home?welcome=true");
             } else {
                 request.setAttribute("signupError", signupResponse.message());
                 request.getRequestDispatcher("sign-up.jsp").forward(request, response);
@@ -62,5 +61,11 @@ public class SignUp extends HttpServlet {
             request.setAttribute("errorCode", 500);
             request.getRequestDispatcher("error.jsp").forward(request, response);
         }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.sendRedirect("sign-up.jsp");
     }
 }

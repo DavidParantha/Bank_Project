@@ -67,7 +67,7 @@ public class LoanRequestServlet extends HttpServlet {
 
             if (success) {
                 log.info("Loan request saved for: " + email + " | Type: " + loanType);
-                response.sendRedirect("LoanRequest.jsp?success=true");
+                response.sendRedirect("LoanRequest.jsp?success=Loan+application+submitted+successfully");
             } else {
                 response.sendRedirect("LoanRequest.jsp?error=failed");
             }

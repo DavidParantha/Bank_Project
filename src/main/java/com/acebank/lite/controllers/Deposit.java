@@ -39,7 +39,7 @@ public class Deposit extends HttpServlet {
                 session.setAttribute("balance", currentBalance.add(amount));
 
                 // 3. Optional: Refresh a transaction list here or in a filter
-                response.sendRedirect(request.getContextPath() + "/home");
+                response.sendRedirect(request.getContextPath() + "/home?success=Money+credited+to+your+account+from+Deposit");
 
 
             } else {

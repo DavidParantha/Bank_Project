@@ -162,7 +162,7 @@ public class ForgotPasswordServlet extends HttpServlet {
         if (success) {
             OtpService.cleanup(email); // Clean up all OTPs
             log.info("Password reset successful for: " + email);
-            response.sendRedirect("login.jsp?success=reset");
+            response.sendRedirect("login.jsp?success=Password+reset+successfully!+You+can+now+log+in.");
         } else {
             response.sendRedirect("ForgotPassword.jsp?error=resetfailed");
         }

@@ -17,7 +17,7 @@ import jakarta.servlet.http.*;
 import lombok.extern.java.Log;
 
 @Log
-@WebServlet(name = "Login", urlPatterns = "/Login")
+@WebServlet(name = "Login", urlPatterns = "/login")
 public class Login extends HttpServlet {
 
     @Serial
@@ -85,6 +85,6 @@ public class Login extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.sendRedirect("Login.jsp");
+        response.sendRedirect("login.jsp");
     }
 }
