@@ -25,7 +25,7 @@ user:
     JOIN ACCOUNTS a ON u.USER_ID = a.USER_ID 
     WHERE a.ACCOUNT_NO = ?
 
-  # Updates the password hash for the user linked to this account
+  # Updates the password hash for the user linked to this account so user can login with new password with any problemmm.
   update_password: >
     UPDATE USERS u
     JOIN ACCOUNTS a ON u.USER_ID = a.USER_ID
