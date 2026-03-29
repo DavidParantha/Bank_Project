@@ -20,7 +20,7 @@ import java.math.BigDecimal;
  * Requires the user to be logged in.
  */
 @Log
-@WebServlet("/LoanRequest")
+@WebServlet("/loan-request")
 public class LoanRequestServlet extends HttpServlet {
 
     @Serial

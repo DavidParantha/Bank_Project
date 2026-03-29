@@ -119,7 +119,7 @@
 
                         <%--==========STEP 1: Enter Email==========--%>
                             <c:if test="${empty param.step}">
-                                <form action="ForgotPassword" method="POST" class="form"
+                                <form action="forgot-password" method="POST" class="form"
                                     style="grid-template-columns: 1fr;">
                                     <input type="hidden" name="action" value="sendOtp" />
 
@@ -137,7 +137,7 @@
 
                             <%--==========STEP 2: Enter OTP==========--%>
                                 <c:if test="${param.step == 'verify'}">
-                                    <form action="ForgotPassword" method="POST" class="form"
+                                    <form action="forgot-password" method="POST" class="form"
                                         style="grid-template-columns: 1fr;">
                                         <input type="hidden" name="action" value="verifyOtp" />
                                         <input type="hidden" name="email" value="${param.email}" />
@@ -163,7 +163,7 @@
                                     </form>
 
                                     <div style="text-align: center; margin-top: 12px;">
-                                        <form action="ForgotPassword" method="POST" style="display:inline;">
+                                        <form action="forgot-password" method="POST" style="display:inline;">
                                             <input type="hidden" name="action" value="sendOtp" />
                                             <input type="hidden" name="email" value="${param.email}" />
                                             <button type="submit" class="btn secondary" style="font-size:13px;">
@@ -177,7 +177,7 @@
 
                                 <%--==========STEP 3: Set New Password==========--%>
                                     <c:if test="${param.step == 'reset'}">
-                                        <form action="ForgotPassword" method="POST" class="form"
+                                        <form action="forgot-password" method="POST" class="form"
                                             style="grid-template-columns: 1fr;" id="reset-pw-form">
                                             <input type="hidden" name="action" value="resetPassword" />
                                             <input type="hidden" name="email" value="${param.email}" />

@@ -265,7 +265,7 @@
                                     <h3><i data-lucide="clipboard-list" class="icon-inline"></i> Transaction History
                                     </h3>
                                     <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                                        <form action="<%= request.getContextPath() %>/SendStatement" method="POST"
+                                        <form action="<%= request.getContextPath() %>/send-statement" method="POST"
                                             style="display:inline;">
                                             <button type="submit" class="reveal-btn" style="margin-top:0;">
                                                 <i data-lucide="mail" class="reveal-icon"></i>

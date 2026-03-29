@@ -20,7 +20,7 @@ import java.util.List;
  * Formats it as a clean text document.
  */
 @Log
-@WebServlet("/SendStatement")
+@WebServlet("/send-statement")
 public class SendStatementServlet extends HttpServlet {
 
     @Serial

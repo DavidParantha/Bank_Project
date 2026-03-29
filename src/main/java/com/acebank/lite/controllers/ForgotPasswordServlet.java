@@ -27,7 +27,7 @@ import java.util.Optional;
  * Step 3: User enters new password → Password is updated in DB
  */
 @Log
-@WebServlet("/ForgotPassword")
+@WebServlet("/forgot-password")
 public class ForgotPasswordServlet extends HttpServlet {
 
     @Serial

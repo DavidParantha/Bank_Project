@@ -19,7 +19,7 @@ import java.io.Serial;
  * Validates old password, checks new password confirmation, then updates.
  */
 @Log
-@WebServlet("/ChangePassword")
+@WebServlet("/change-password")
 public class ChangePasswordServlet extends HttpServlet {
 
     @Serial

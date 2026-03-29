@@ -108,7 +108,7 @@
                         </div>
                     </c:if>
 
-                    <form action="ChangePassword" method="POST" class="form" style="grid-template-columns: 1fr;"
+                    <form action="change-password" method="POST" class="form" style="grid-template-columns: 1fr;"
                         id="change-pw-form">
                         <input type="hidden" name="action" value="changePassword" />
 

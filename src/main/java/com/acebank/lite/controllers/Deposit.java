@@ -23,7 +23,7 @@ public class Deposit extends HttpServlet {
         String amountStr = request.getParameter("amount");
 
         if (accNo == null) {
-            response.sendRedirect("Login.jsp");
+            response.sendRedirect("login.jsp");
             return;
         }
 

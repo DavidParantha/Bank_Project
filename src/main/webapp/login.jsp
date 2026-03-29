@@ -50,7 +50,7 @@
                         </div>
                     </c:if>
 
-                    <form action="Login" method="POST" class="form" style="grid-template-columns: 1fr;">
+                    <form action="login" method="POST" class="form" style="grid-template-columns: 1fr;">
                         <label for="accNo">Account Number or Email</label>
                         <input type="text" id="accNo" name="accountNumber" value="${savedAccount}" required
                             placeholder="e.g., 1000 or user@example.com" />

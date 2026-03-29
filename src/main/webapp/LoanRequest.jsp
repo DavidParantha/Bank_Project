@@ -202,7 +202,7 @@
                         </div>
                     </div>
 
-                    <form action="LoanRequest" method="POST" class="form" style="grid-template-columns: 1fr 1fr;">
+                    <form action="loan-request" method="POST" class="form" style="grid-template-columns: 1fr 1fr;">
 
                         <%-- Loan Type Selector --%>
                             <div style="grid-column: 1 / -1;">
