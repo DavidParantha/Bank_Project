@@ -52,3 +52,19 @@ CREATE TABLE IF NOT EXISTS LOAN_REQUESTS (
     STATUS ENUM('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
     CREATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- ============================================================
+-- DEMO SEED DATA (for presentation / evaluation purposes)
+-- Account No : 100001
+-- Password   : Demo@1234
+-- Email      : demo@acebank.com
+-- INSERT IGNORE ensures this never fails if the demo user already exists
+-- ============================================================
+INSERT IGNORE INTO USERS (FIRST_NAME, LAST_NAME, AADHAAR_NO, EMAIL, PASSWORD_HASH)
+VALUES ('Demo', 'User', '123456789012', 'demo@acebank.com',
+        '$2a$12$KIXnS5K8UjxYMPUDg1F0.O9FqF6k//NndVhj5nrDrZwwQepKlXmMK');
+
+INSERT IGNORE INTO ACCOUNTS (ACCOUNT_NO, USER_ID, ACCOUNT_TYPE, BALANCE, STATUS)
+SELECT 100001, USER_ID, 'SAVINGS', 50000.00, 'ACTIVE'
+FROM USERS
+WHERE EMAIL = 'demo@acebank.com';

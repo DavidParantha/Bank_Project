@@ -28,7 +28,11 @@ public final class ConnectionManager {
                 if (!isSchemaInitialized) {
                     String scriptPath = ConfigLoader.getProperty(ConfigKeys.DB_SCRIPT_PATH);
                     if (scriptPath != null) {
-                        runInitScript(conn, scriptPath);
+                        try (Connection initConn = establishConnection()) {
+                            runInitScript(initConn, scriptPath);
+                        } catch (Exception e) {
+                            log.severe("Failed to run init script: " + e.getMessage());
+                        }
                     }
                     isSchemaInitialized = true; // Set flag so it never runs again
                 }
@@ -56,19 +60,29 @@ public final class ConnectionManager {
     }
 
     private static void runInitScript(Connection conn, String path) {
-        String normalizedPath = path.startsWith("/") ? path : "/" + path;
-        try (InputStream is = ConnectionManager.class.getResourceAsStream(normalizedPath)) {
-            if (is == null) {
-                log.warning("Script not found at: " + normalizedPath);
-                return;
-            }
+        String normalizedPath = path.startsWith("/") ? path.substring(1) : path;
+        
+        // Try multiple ways to load the file
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(normalizedPath);
+        if (is == null) {
+            is = ConnectionManager.class.getResourceAsStream("/" + normalizedPath);
+        }
+        
+        if (is == null) {
+            log.severe("CRITICAL: Script not found at: " + normalizedPath + " or /" + normalizedPath);
+            return;
+        }
+        
+        try {
             ScriptRunner runner = new ScriptRunner(conn);
             runner.setLogWriter(null);
-            runner.setStopOnError(false);
+            runner.setStopOnError(true); // Fail loudly if script has syntax errors
             runner.runScript(new BufferedReader(new InputStreamReader(is)));
-            log.info("SQL Schema checked/initialized.");
+            log.info("SQL Schema successfully initialized.");
         } catch (Exception e) {
             log.severe("SQL Init Error: " + e.getMessage());
+        } finally {
+            try { is.close(); } catch (Exception e) {}
         }
     }
 }

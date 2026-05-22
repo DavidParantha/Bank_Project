@@ -42,3 +42,5 @@ build/
 
 .idea/
 .smarttomcat/
+tomcat-base-test/
+*.class

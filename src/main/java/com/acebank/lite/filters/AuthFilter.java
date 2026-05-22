@@ -8,9 +8,9 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-// This defines the "Restricted Area." Any request to /home, /Withdraw, or /Transfer must pass through this guard first.
-@WebFilter(urlPatterns = { "/home", "/deposit", "/Withdraw", "/Transfer", "/getStatement", "/ChangePassword", "/LoanRequest",
-        "/Settings.jsp", "/SendStatement", "/logout", "/WEB-INF/views/*" })
+// This defines the "Restricted Area." Any request to /home or any authenticated endpoint must pass through this guard first.
+@WebFilter(urlPatterns = { "/home", "/deposit", "/change-password", "/loan-request",
+        "/send-statement", "/logout", "/WEB-INF/views/*" })
 public class AuthFilter implements Filter {
 
     @Override
