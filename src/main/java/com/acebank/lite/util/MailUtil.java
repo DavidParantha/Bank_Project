@@ -70,24 +70,39 @@ public class MailUtil {
     private static Properties getSmtpConfig() {
         Properties props = new Properties();
 
-        // Mapping keys from ConfigKeys to the Properties object
-        props.put("mail.smtp.host", ConfigLoader.getProperty(ConfigKeys.MAIL_SMTP_HOST));
-        props.put("mail.smtp.port", ConfigLoader.getProperty(ConfigKeys.MAIL_SMTP_PORT));
-        props.put("mail.smtp.auth", ConfigLoader.getProperty(ConfigKeys.MAIL_SMTP_AUTH));
-        props.put("mail.smtp.starttls.enable", ConfigLoader.getProperty(ConfigKeys.MAIL_SMTP_STARTTLS));
-        props.put("mail.smtp.connectiontimeout", ConfigLoader.getProperty(ConfigKeys.MAIL_SMTP_CONN_TIMEOUT));
-        props.put("mail.smtp.timeout", ConfigLoader.getProperty(ConfigKeys.MAIL_SMTP_TIMEOUT));
+        // Safely load each SMTP property with null-safe fallback defaults.
+        // Previously, passing a null value to props.put() caused a NullPointerException
+        // which silently killed the entire email system.
+        putSafe(props, "mail.smtp.host",
+                ConfigLoader.getProperty(ConfigKeys.MAIL_SMTP_HOST), "smtp.gmail.com");
+        putSafe(props, "mail.smtp.port",
+                ConfigLoader.getProperty(ConfigKeys.MAIL_SMTP_PORT), "587");
+        putSafe(props, "mail.smtp.auth",
+                ConfigLoader.getProperty(ConfigKeys.MAIL_SMTP_AUTH), "true");
+        putSafe(props, "mail.smtp.starttls.enable",
+                ConfigLoader.getProperty(ConfigKeys.MAIL_SMTP_STARTTLS), "true");
+        putSafe(props, "mail.smtp.connectiontimeout",
+                ConfigLoader.getProperty(ConfigKeys.MAIL_SMTP_CONN_TIMEOUT), "10000");
+        putSafe(props, "mail.smtp.timeout",
+                ConfigLoader.getProperty(ConfigKeys.MAIL_SMTP_TIMEOUT), "10000");
 
-        // Fallback defaults if above are null
-        if (props.getProperty("mail.smtp.host") == null)
-            props.put("mail.smtp.host", "smtp.gmail.com");
-        if (props.getProperty("mail.smtp.port") == null)
-            props.put("mail.smtp.port", "587");
-        if (props.getProperty("mail.smtp.auth") == null)
-            props.put("mail.smtp.auth", "true");
-        if (props.getProperty("mail.smtp.starttls.enable") == null)
-            props.put("mail.smtp.starttls.enable", "true");
+        // SSL trust — critical for Docker/cloud environments where the JVM
+        // may not have smtp.gmail.com's CA certificate pre-trusted.
+        props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
 
         return props;
+    }
+
+    /**
+     * Null-safe property setter. Uses fallback if value is null or blank.
+     * Prevents the NullPointerException that Properties.put() throws on null values.
+     */
+    private static void putSafe(Properties props, String key, String value, String fallback) {
+        if (value != null && !value.isBlank()) {
+            props.put(key, value);
+        } else {
+            props.put(key, fallback);
+            log.warning("SMTP config '" + key + "' was null/blank — using fallback: " + fallback);
+        }
     }
 }

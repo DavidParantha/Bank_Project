@@ -161,11 +161,8 @@ public class BankServiceImpl implements BankService {
         String subject = "Welcome to AceBank";
         String msg = String.format("Dear %s,\n\nWelcome! Your account number is: %d.\nKeep it safe!",
                 user.firstName(), accNo);
-        try {
-            MailUtil.sendMail(user.email(), subject, msg);
-        } catch (Exception e) {
-            log.warning("Email failed to send, but account was created.");
-        }
+        // Use async so signup response isn't delayed by email sending
+        MailUtil.sendMailAsync(user.email(), subject, msg);
     }
 
     @Override
